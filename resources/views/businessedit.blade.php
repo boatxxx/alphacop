@@ -1,0 +1,83 @@
+@extends('layouts.app')
+<style>
+    .custom-form-control {
+        border-radius: 25px;
+        padding: 10px 15px;
+    }
+
+    .custom-card {
+        width: 50%;
+        margin-top: 0;
+    }
+
+    .custom-label {
+        font-size: 20px;
+    }
+</style>
+
+@extends('layouts.menu')
+@section('content')
+<div class="container"  align="center,top"  >
+    <div class="d-flex justify-content-center align-items-center vh-100  mt-0">
+        <div class="card custom-card p-4" style="width:80%;" align="top">
+               @if (session('status'))
+                <div class="alert alert-success">
+                    {{ session('status') }}
+                </div>
+            @endif
+            <form action="{{ route('business.update', $company->id)}}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <select name="selected_company_id" id="company-select" class="search-input">
+                    <option value="">-- เลือกพนักงาน --</option>
+                    @foreach ($users as $user)
+                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+                <script>
+                    document.getElementById('company-select').addEventListener('change', function() {
+                        const selectedCompanyId = this.value;
+                        document.getElementById('selected_company_id_input').value = selectedCompanyId;
+                        document.getElementById('search-form').submit();
+                    });
+                </script>
+                @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+                <div class="form-group">
+                    <label for="leave_type" class="custom-label">ประเภทการลา</label>
+                    <select id="leave_type" name="leave_type" class="form-control custom-form-control" value="{{ $company->leave_type }}" required>
+                        <option value="ลาป่วย">ลาป่วย</option>
+                        <option value="ลาพักร้อน">ลาพักร้อน</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="leave_days" class="custom-label">จำนวนวันลา</label>
+                    <input value="{{ $company->leave_days }}"type="number" id="leave_days" name="leave_days" class="form-control custom-form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="reason" class="custom-label">เหตุผล</label>
+                    <textarea id="reason" name="reason" class="form-control custom-form-control" rows="4" required>{{ $company->reason }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="request_date" class="custom-label">วันที่ขอลา</label>
+                    <input value="{{ $company->request_date }}"type="date" id="request_date" name="request_date" class="form-control custom-form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="image" class="custom-label">รูปภาพ</label>
+                    <input type="file" id="image" name="image" class="form-control-file custom-form-control" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-primary">บันทึก</button>
+            </form>
+        </div>
+    </div>
+
+
+
+</div>
+@endsection
